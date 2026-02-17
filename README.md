@@ -35,20 +35,16 @@ Create a `config.json` file with the following structure:
 
 ```json
 {
-  "log_level": "debug",
-  "server": {
-    "port": 8080,
-    "host": "0.0.0.0"
-  },
+  "$schema": "https://www.getbifrost.ai/schema",
   "plugins": [
     {
       "enabled": true,
       "name": "accuknox-logger",
-      "path": "./accuknox-plugin.so",
+      "path": "./bifrost-accuknox-integration/accuknox-plugin.so",
       "config": {
         "enabled": true,
-        "api_key": "your-accuknox-jwt-token-here",
-        "user_info": "your-email@example.com"
+        "api_key": "your-accuknox-prompt-firewall-jwt-token-here",
+        "user_info": "your-user-email@example.com"
       }
     }
   ],
@@ -56,8 +52,11 @@ Create a `config.json` file with the following structure:
     "openai": {
       "keys": [
         {
-          "value": "sk-your-openai-api-key",
-          "models": ["gpt-3.5-turbo", "gpt-4"],
+          "name": "default-openai-key",
+          "value": "<your-openai-api-key-here>",
+          "models": [
+            "gpt-3.5-turbo"
+          ],
           "weight": 1.0
         }
       ]
@@ -95,7 +94,7 @@ The plugin automatically:
 For testing config use bifrost-http
 
 ```bash
-./bifrost-http -app-dir . -log-level debug -log-style pretty
+./bifrost-http -app-dir . -log-level debug -log-style pretty -port 8080
 ```
 
 You should see:
@@ -108,17 +107,9 @@ You should see:
 ### 2. Make API Requests
 
 ```bash
-curl -X POST http://localhost:8080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
+curl -X POST http://localhost:8081/v1/chat/completions   -H "Content-Type: application/json"   -d '{
     "model": "openai/gpt-3.5-turbo",
-    "messages": [
-      {
-        "role": "user",
-        "content": "Hello, how are you?"
-      }
-    ],
-    "max_tokens": 100
+    "messages": [{"role": "user", "content": "Hello, how are you?"}]
   }'
 ```
 
